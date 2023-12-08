@@ -1,4 +1,4 @@
-<img src="media/header.svg" width="800" align="center" alt="cssed"/>
+<img src="media/header.svg" width="800" align="center" alt="Okotoki"/>
 
 # Okotoki API client for NodeJS
 
