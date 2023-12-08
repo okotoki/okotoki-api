@@ -466,10 +466,6 @@ Will emit `BookChangeNormalized` into `.onMessage` handler.
 
 Example:
 
-```json
-
-```
-
 ```javascript
 api.subscribe([
   {
@@ -515,7 +511,7 @@ Example:
   "kind": "bookChange",
   "exchange": "coinbase",
   "symbol": "BTC-USD",
-  "isSnapshot": boolean
+  "isSnapshot": true,
   "bids": [
     { "price": 30720, "amount": 0.01627 },
     { "price": 40960, "amount": 0.31364 },
