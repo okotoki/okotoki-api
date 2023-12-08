@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "outDir": "./lib",
+    "declarationDir": "./lib",
+    "target": "esnext",
+    "lib": ["esnext", "dom"],
+    "sourceMap": true,
+    "declaration": true,
+    "module": "CommonJS",
+    "strict": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["node_modules/@types"],
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "skipDefaultLibCheck": true,
+    "preserveWatchOutput": true
+  },
+  "include": ["src", "examples/basic-usage.ts"],
+  "exclude": ["./lib/**/*", "node_modules"]
+}

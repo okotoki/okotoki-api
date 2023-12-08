@@ -1,0 +1,38 @@
+{
+  "name": "okotoki",
+  "version": "1.0.0-beta.1",
+  "description": "Okotoki API client for node",
+  "main": "./lib/index.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "test": "tsc",
+    "build": "rm -rf ./lib && NODE_ENV=production tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/okotoki/okotoki.git"
+  },
+  "keywords": [
+    "okotoki",
+    "crypto-api"
+  ],
+  "author": "Eugene",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/okotoki/okotoki/issues"
+  },
+  "homepage": "https://github.com/okotoki/okotoki#readme",
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "@types/isomorphic-fetch": "^0.0.39",
+    "@types/node": "^20.10.3",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "avsc": "^5.7.7",
+    "debug": "^4.3.4",
+    "isomorphic-fetch": "^3.0.0",
+    "isomorphic-ws": "^5.0.0"
+  }
+}
