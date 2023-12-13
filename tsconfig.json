@@ -17,6 +17,6 @@
     "skipDefaultLibCheck": true,
     "preserveWatchOutput": true
   },
-  "include": ["src", "examples/basic-usage.ts"],
+  "include": ["src"],
   "exclude": ["./lib/**/*", "node_modules"]
 }

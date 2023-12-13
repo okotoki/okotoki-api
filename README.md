@@ -1,4 +1,4 @@
-<img src="media/header.svg" width="800" align="center" alt="Okotoki"/>
+<img src="https://raw.githubusercontent.com/okotoki/okotoki-api/main/media/header.svg" width="800" align="center" alt="Okotoki"/>
 
 # Okotoki API client for NodeJS
 
@@ -17,7 +17,7 @@ For a demo you can use `DEMO_API_KEY` and `DEMO_API_SECRET`. When you'll go for 
 # Usage
 
 ```js
-import OkotokiAPI, { Exchanges, InMessage } from 'okotoki'
+import OkotokiAPI, { Exchanges } from 'okotoki'
 
 const API_KEY = 'DEMO_API_KEY'
 const API_SECRET = 'DEMO_API_SECRET'
@@ -74,7 +74,7 @@ api.tradeAndLiquidation(
 
 api.index(['BTC', 'ETH', 'BNB', 'AAVE', 'ATOM', 'EOS', 'LINK', 'UNI'])
 
-api.orderbook(
+api.orderBook(
   [
     [Exchanges.bitmex, 'XBT_USDT'],
     [Exchanges.bitmex, 'XBTUSD']
@@ -86,7 +86,7 @@ api.orderbook(
 )
 ```
 
-That's it? That's it. See [./examples/basic-usage](examples/basic-usage) for more examples.
+That's it? That's it.
 
 # What's included
 
