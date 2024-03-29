@@ -8,9 +8,11 @@ import {
   Exchange,
   InBinaryMessage,
   InBinaryMessageRaw,
+  IndexSubscription,
   InJSONMessage,
   InMessage,
-  IndexSubscription,
+  LeveledTradeVolumeSubscription,
+  LeveledTradeVolumeSubscriptionOptions,
   Market,
   OrderBookSubscription,
   OrderBookSubscriptionOptions,
@@ -21,6 +23,7 @@ import {
   TradeSubscriptionOptions,
   TradeVolumeSubscription
 } from './types'
+
 export * from './types'
 
 export type WsOptions = Partial<{
@@ -143,6 +146,22 @@ export default class Api {
         kind: 'tradeVolume',
         exchange,
         symbol
+      })
+    )
+
+    this._sendSubscriptionMessage(subs)
+  }
+
+  public leveledTradeVolume(
+    markets: [Exchange, string][],
+    options: LeveledTradeVolumeSubscriptionOptions
+  ) {
+    const subs: LeveledTradeVolumeSubscription[] = markets.map(
+      ([exchange, symbol]) => ({
+        kind: 'leveledTradeVolume',
+        exchange,
+        symbol,
+        ...options
       })
     )
 
