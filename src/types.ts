@@ -57,6 +57,7 @@ export type Subscription =
   | TradeVolumeSubscription
   | OrderBookSubscription
   | IndexSubscription
+  | LeveledTradeVolumeSubscription
 
 export interface BaseSubscription {
   symbol: string
@@ -70,6 +71,12 @@ export interface TradeSubscriptionOptions {
   limitLiquidations?: number
 }
 
+export interface LeveledTradeVolumeSubscriptionOptions {
+  interval: number
+  window: number
+  step: number
+}
+
 export interface TradeSubscription
   extends BaseSubscription,
     TradeSubscriptionOptions {
@@ -80,6 +87,12 @@ export interface PriceSubscription extends BaseSubscription {
   kind: 'price'
 }
 
+export interface LeveledTradeVolumeSubscription
+  extends BaseSubscription,
+    LeveledTradeVolumeSubscriptionOptions {
+  kind: 'leveledTradeVolume'
+}
+
 export interface TradeVolumeSubscription extends BaseSubscription {
   kind: 'tradeVolume'
 }
@@ -87,6 +100,8 @@ export interface TradeVolumeSubscription extends BaseSubscription {
 export interface OrderBookSubscriptionOptions {
   step: number
   rate: number
+  interval: number
+  window: number
 }
 
 export interface OrderBookSubscription
