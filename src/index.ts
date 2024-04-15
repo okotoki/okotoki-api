@@ -181,7 +181,7 @@ export default class Api {
     this._sendSubscriptionMessage(subscriptions)
   }
 
-  private connect() {
+  public connect() {
     this.debug('estabilishing connection to %s', this._wsUrl)
 
     this._rws = new ReconnectingWebSocket(
@@ -194,6 +194,18 @@ export default class Api {
     this._rws.onclose = this._onConnectionClosed
     this._rws.onmessage = this._onMessage
     this._rws.onerror = this._onError
+  }
+
+  public disconnect() {
+    this.debug('disconnecting from to %s', this._wsUrl)
+    this.stopPingInterval()
+    this._rws!.close()
+  }
+
+  public reconnect() {
+    this.debug('reconnecting to %s', this._wsUrl)
+    this.stopPingInterval()
+    this._rws!.reconnect()
   }
 
   _preConnectSubscriptionsQueue: Subscription[][] = []
