@@ -52,12 +52,15 @@ export type OkotokiApiOptions = {
   restUrl?: string
   // enables debugging mode, with verbose logs
   debug?: boolean
+  // Deserialize binary messages on client or on backend
+  useBinary?: boolean
 }
 
 const defaultOptions: OkotokiApiOptions = {
   key: '',
   secret: '',
-  debug: false
+  debug: false,
+  useBinary: false
 }
 
 const defaultWsOptions: WsOptions = {
@@ -185,7 +188,7 @@ export default class Api {
     this.debug('estabilishing connection to %s', this._wsUrl)
 
     this._rws = new ReconnectingWebSocket(
-      this._wsUrl,
+      `${this._wsUrl}?useBinary=${!!this.options?.useBinary}`,
       undefined,
       this.wsOptions
     )
@@ -265,7 +268,12 @@ export default class Api {
   private _onMessage = async (event: MessageEvent) => {
     this._updatePingInterval()
 
-    const message = await this._parseIncomingMessage(event.data)
+    const message = !this.options?.useBinary
+      ? (() => {
+          const data = JSON.parse(event.data)
+          return data[Object.keys(data)[0]]
+        })()
+      : await this._parseIncomingMessage(event.data)
 
     this.debug('received message %o', message)
 
