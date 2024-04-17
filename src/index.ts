@@ -60,7 +60,7 @@ const defaultOptions: OkotokiApiOptions = {
   key: '',
   secret: '',
   debug: false,
-  useBinary: false
+  useBinary: true
 }
 
 const defaultWsOptions: WsOptions = {
