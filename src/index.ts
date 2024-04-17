@@ -271,7 +271,9 @@ export default class Api {
     const message = !this.options?.useBinary
       ? (() => {
           const data = JSON.parse(event.data)
-          return data[Object.keys(data)[0]]
+          const type = Object.keys(data)[0]
+
+          return { ...data[type], type }
         })()
       : await this._parseIncomingMessage(event.data)
 
