@@ -7,7 +7,8 @@ const api = new Api({
   key,
   secret,
   wsUrl: 'wss://api-eu.stage.okotoki.com/ws',
-  debug: true
+  debug: true,
+  useBinary: false
 })
 
 api.onMessage = (msg) => {
