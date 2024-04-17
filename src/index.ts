@@ -188,7 +188,11 @@ export default class Api {
     this.debug('estabilishing connection to %s', this._wsUrl)
 
     this._rws = new ReconnectingWebSocket(
-      `${this._wsUrl}?useBinary=${!!this.options?.useBinary}`,
+      `${this._wsUrl}?useBinary=${
+        this.options?.useBinary === undefined
+          ? defaultOptions.useBinary
+          : this.options.useBinary
+      }`,
       undefined,
       this.wsOptions
     )
