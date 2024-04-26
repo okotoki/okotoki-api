@@ -1,4 +1,12 @@
-import Api, { Exchanges } from '../src'
+import Api, {
+  Exchanges,
+  coinIndex,
+  largeTrades,
+  leveledTradeVolume,
+  orderBook,
+  price,
+  tradeVolume
+} from '../src'
 
 const key = 'YOUR_API_KEY'
 const secret = 'YOUR_API_SECRET'
@@ -35,30 +43,35 @@ api.subscribe([
   }
 ])
 
-api.tradeAndLiquidation(
-  [
-    [Exchanges.bitmex, 'XBT_USDT'],
-    [Exchanges.bitmex, 'XBTUSD']
-  ],
-  {
-    thresholdTrades: 50000,
-    thresholdLiquidations: 0,
-    limitLiquidations: 30,
-    limitTrades: 30
-  }
-)
+// or using helper subscrition methods
 
-api.index(['BTC', 'ETH', 'BNB', 'AAVE', 'ATOM', 'EOS', 'LINK', 'UNI'])
+const tradesOpts = {
+  thresholdTrades: 50000,
+  thresholdLiquidations: 0,
+  limitLiquidations: 30,
+  limitTrades: 30
+}
 
-api.orderBook([[Exchanges.binance, 'BTCUSDT']], {
+const orderBookOpts = {
   step: 10,
   rate: 1000,
   interval: 60000,
   window: 0
-})
+}
 
-api.leveledTradeVolume([[Exchanges.binance, 'BTCUSDT']], {
+const leveledTradeVolumeOpts = {
   interval: 60000,
   window: 3600000,
   step: 10
-})
+}
+
+api.subscribe([
+  coinIndex('BTC'),
+  coinIndex('ETH'),
+  price(Exchanges.binance, 'BTCUSDT'),
+  largeTrades(Exchanges.binance, 'BTCUSDT', tradesOpts),
+  largeTrades(Exchanges.bitmex, 'XBTUSD', tradesOpts),
+  tradeVolume(Exchanges.bitmex, 'BTCUSDT'),
+  orderBook(Exchanges.binance, 'BTCUSDT', orderBookOpts),
+  leveledTradeVolume(Exchanges.binance, 'BTCUSDT', leveledTradeVolumeOpts)
+])

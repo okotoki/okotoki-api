@@ -56,6 +56,62 @@ export type OkotokiApiOptions = {
   useBinary?: boolean
 }
 
+export const largeTrades = (
+  exchange: Exchange,
+  symbol: string,
+  options: TradeSubscriptionOptions
+): TradeSubscription => ({
+  kind: 'largeTrades',
+  exchange,
+  symbol,
+  ...options
+})
+
+export const orderBook = (
+  exchange: Exchange,
+  symbol: string,
+  options: OrderBookSubscriptionOptions
+): OrderBookSubscription => ({
+  kind: 'orderBook',
+  exchange,
+  symbol,
+  ...options
+})
+
+export const price = (
+  exchange: Exchange,
+  symbol: string
+): PriceSubscription => ({
+  kind: 'price',
+  exchange,
+  symbol
+})
+
+export const tradeVolume = (
+  exchange: Exchange,
+  symbol: string
+): TradeVolumeSubscription => ({
+  kind: 'tradeVolume',
+  exchange,
+  symbol
+})
+
+export const leveledTradeVolume = (
+  exchange: Exchange,
+  symbol: string,
+  options: LeveledTradeVolumeSubscriptionOptions
+): LeveledTradeVolumeSubscription => ({
+  kind: 'leveledTradeVolume',
+  exchange,
+  symbol,
+  ...options
+})
+
+export const coinIndex = (coin: string): IndexSubscription => ({
+  kind: 'index',
+  coin
+})
+
 const defaultOptions: OkotokiApiOptions = {
   key: '',
   secret: '',
@@ -100,85 +156,11 @@ export default class Api {
 
   public getSupportedCoins = (): Promise<string[]> =>
     fetch(`${this._restUrl}/coins`).then((res) => res.json())
+
   public getMarketsForCoin = (coin: string): Promise<Market[]> =>
     fetch(`${this._restUrl}/markets/${coin.toUpperCase()}`).then((res) =>
       res.json()
     )
-
-  public tradeAndLiquidation(
-    markets: [Exchange, string][],
-    options: TradeSubscriptionOptions
-  ) {
-    const subs: TradeSubscription[] = markets.map(([exchange, symbol]) => ({
-      kind: 'largeTrades',
-      exchange,
-      symbol,
-      ...options
-    }))
-
-    this._sendSubscriptionMessage(subs)
-  }
-
-  public orderBook(
-    markets: [Exchange, string][],
-    options: OrderBookSubscriptionOptions
-  ) {
-    const subs: OrderBookSubscription[] = markets.map(([exchange, symbol]) => ({
-      kind: 'orderBook',
-      exchange,
-      symbol,
-      ...options
-    }))
-
-    this._sendSubscriptionMessage(subs)
-  }
-
-  public price(markets: [Exchange, string][]) {
-    const subs: PriceSubscription[] = markets.map(([exchange, symbol]) => ({
-      kind: 'price',
-      exchange,
-      symbol
-    }))
-
-    this._sendSubscriptionMessage(subs)
-  }
-
-  public tradeVolume(markets: [Exchange, string][]) {
-    const subs: TradeVolumeSubscription[] = markets.map(
-      ([exchange, symbol]) => ({
-        kind: 'tradeVolume',
-        exchange,
-        symbol
-      })
-    )
-
-    this._sendSubscriptionMessage(subs)
-  }
-
-  public leveledTradeVolume(
-    markets: [Exchange, string][],
-    options: LeveledTradeVolumeSubscriptionOptions
-  ) {
-    const subs: LeveledTradeVolumeSubscription[] = markets.map(
-      ([exchange, symbol]) => ({
-        kind: 'leveledTradeVolume',
-        exchange,
-        symbol,
-        ...options
-      })
-    )
-
-    this._sendSubscriptionMessage(subs)
-  }
-
-  public index(coins: string[]) {
-    const subs: IndexSubscription[] = coins.map((coin) => ({
-      kind: 'index',
-      coin
-    }))
-
-    this._sendSubscriptionMessage(subs)
-  }
 
   public subscribe(subscriptions: Subscription[]) {
     this._sendSubscriptionMessage(subscriptions)
@@ -216,17 +198,12 @@ export default class Api {
   }
 
   _preConnectSubscriptionsQueue: Subscription[][] = []
-  _currentSubscriptions: Subscription[] = []
 
   private _sendSubscriptionMessage(subscriptions: Subscription[]) {
     if (this._initiallyConnected) {
-      this._currentSubscriptions = mergeSubscriptions(
-        this._currentSubscriptions,
-        subscriptions
-      )
       this._send({
         type: 'subscribe',
-        subscriptions: this._currentSubscriptions
+        subscriptions: removeDuplicates(subscriptions)
       })
     } else {
       this._preConnectSubscriptionsQueue.push(subscriptions)
@@ -339,12 +316,7 @@ export default class Api {
     this._initiallyConnected = true
     this._auth()
 
-    let res: Subscription[] = []
-    for (const subs of this._preConnectSubscriptionsQueue) {
-      res = mergeSubscriptions(subs, res)
-    }
-
-    this._sendSubscriptionMessage(res)
+    this._sendSubscriptionMessage(this._preConnectSubscriptionsQueue.flat())
     this._preConnectSubscriptionsQueue = []
   }
 
@@ -355,24 +327,5 @@ export default class Api {
   }
 }
 
-const mergeSubscriptions = (subsA: Subscription[], subsB: Subscription[]) => {
-  const res = [...subsB]
-  for (const sub of subsA) {
-    const exists = subsB.some((s) => {
-      if (s.kind !== sub.kind) return false
-
-      if (s.kind === 'index') {
-        return (s as IndexSubscription).coin === (sub as IndexSubscription).coin
-      }
-
-      const _sub = sub as Exclude<Subscription, IndexSubscription>
-      return _sub.exchange === s.exchange && _sub.symbol === s.symbol
-    })
-
-    if (exists) continue
-
-    res.push(sub)
-  }
-
-  return res
-}
+const removeDuplicates = <T>(arr: T[]): T[] =>
+  arr.filter((item, index) => arr.indexOf(item) === index)

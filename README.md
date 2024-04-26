@@ -17,7 +17,15 @@ For a demo you can use `DEMO_API_KEY` and `DEMO_API_SECRET`. When you'll go for 
 # Usage
 
 ```js
-import Api, { Exchanges } from '../src'
+import Api, {
+  Exchanges,
+  coinIndex,
+  largeTrades,
+  leveledTradeVolume,
+  orderBook,
+  price,
+  tradeVolume
+} from '../src'
 
 const key = 'YOUR_API_KEY'
 const secret = 'YOUR_API_SECRET'
@@ -26,7 +34,8 @@ const api = new Api({
   key,
   secret,
   wsUrl: 'wss://api-eu.stage.okotoki.com/ws',
-  debug: true
+  debug: true,
+  useBinary: false
 })
 
 api.onMessage = (msg) => {
@@ -53,33 +62,38 @@ api.subscribe([
   }
 ])
 
-api.tradeAndLiquidation(
-        [
-          [Exchanges.bitmex, 'XBT_USDT'],
-          [Exchanges.bitmex, 'XBTUSD']
-        ],
-        {
-          thresholdTrades: 50000,
-          thresholdLiquidations: 0,
-          limitLiquidations: 30,
-          limitTrades: 30
-        }
-)
+// or using helper subscrition methods
 
-api.index(['BTC', 'ETH', 'BNB', 'AAVE', 'ATOM', 'EOS', 'LINK', 'UNI'])
+const tradesOpts = {
+  thresholdTrades: 50000,
+  thresholdLiquidations: 0,
+  limitLiquidations: 30,
+  limitTrades: 30
+}
 
-api.orderBook([[Exchanges.binance, 'BTCUSDT']], {
+const orderBookOpts = {
   step: 10,
   rate: 1000,
   interval: 60000,
   window: 0
-})
+}
 
-api.leveledTradeVolume([[Exchanges.binance, 'BTCUSDT']], {
+const leveledTradeVolumeOpts = {
   interval: 60000,
   window: 3600000,
   step: 10
-})
+}
+
+api.subscribe([
+  coinIndex('BTC'),
+  coinIndex('ETH'),
+  price(Exchanges.binance, 'BTCUSDT'),
+  largeTrades(Exchanges.binance, 'BTCUSDT', tradesOpts),
+  largeTrades(Exchanges.bitmex, 'XBTUSD', tradesOpts),
+  tradeVolume(Exchanges.bitmex, 'BTCUSDT'),
+  orderBook(Exchanges.binance, 'BTCUSDT', orderBookOpts),
+  leveledTradeVolume(Exchanges.binance, 'BTCUSDT', leveledTradeVolumeOpts)
+])
 ```
 
 That's it? That's it.
@@ -302,18 +316,17 @@ api.subscribe([
 
 // or via shortcut method
 
-api.tradeAndLiquidation(
-  [
-    [Exchanges.bitmex, 'XBT_USDT'],
-    [Exchanges.bitmex, 'XBTUSD']
-  ],
-  {
-    thresholdTrades: 200000,
-    thresholdLiquidations: 5000,
-    limitLiquidations: 30,
-    limitTrades: 30
-  }
-)
+const tradesOpts = {
+  thresholdTrades: 50000,
+  thresholdLiquidations: 0,
+  limitLiquidations: 30,
+  limitTrades: 30
+}
+
+api.subscribe([
+  largeTrades(Exchanges.binance, 'BTCUSDT', tradesOpts),
+  largeTrades(Exchanges.bitmex, 'XBTUSD', tradesOpts)
+])
 ```
 
 ### TradeNormalized
@@ -371,10 +384,7 @@ api.subscribe([
 
 // or via shortcut method
 
-api.price([
-  [Exchanges.bitmex, 'XBT_USDT'],
-  [Exchanges.bitmex, 'XBTUSD']
-])
+api.subscribe([price(Exchanges.binance, 'BTCUSDT')])
 ```
 
 ### PriceUpdateNormalized
@@ -422,8 +432,7 @@ api.subscribe([
 ])
 
 // or via shortcut method
-
-api.index(['BTC', 'ETH'])
+api.subscribe([coinIndex('BTC'), coinIndex('ETH')])
 ```
 
 ### IndexNormalized
@@ -475,10 +484,14 @@ api.subscribe([
 
 // or via shortcut method
 
-api.orderBook([[Exchange.binance, 'BTCUSDT']], {
+const orderBookOpts = {
   step: 10,
-  rate: 3000
-})
+  rate: 1000,
+  interval: 60000,
+  window: 0
+}
+
+api.subscribe([orderBook(Exchanges.binance, 'BTCUSDT', orderBookOpts)])
 ```
 
 ### BookChangeNormalized
@@ -562,7 +575,7 @@ api.subscribe([
 
 // or via shortcut method
 
-api.tradeVolume([[Exchange.binance, 'BTCUSDT']])
+api.subscribe([tradeVolume(Exchanges.bitmex, 'BTCUSDT')])
 ```
 
 ### TradeVolumeNormalized
