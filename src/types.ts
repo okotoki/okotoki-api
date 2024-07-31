@@ -115,6 +115,18 @@ export interface IndexSubscription {
   coin: string
 }
 
+export interface CandlesSubscriptionOptions {
+  interval: number
+  window: number
+  metrics: string[]
+}
+
+export interface CandlesSubscription
+  extends BaseSubscription,
+    CandlesSubscriptionOptions {
+  kind: 'candles'
+}
+
 export type MarketState = 'enabled' | 'disabled' | 'unlisted'
 
 export type StateEvent = {
@@ -172,7 +184,7 @@ export type VolumeHistogram = {
   volumesSell: number[]
 }
 
-export type BookPriceLevel = {
+export type PriceLevel = {
   readonly price: number
   readonly amount: number
 }
@@ -194,9 +206,23 @@ export interface BookChangeNormalized {
   type: BinaryMessageType.BookChange
   exchange: Exchange
   symbol: string
+  timestamp: number
+  idx: number
   isSnapshot: boolean
-  bids: BookPriceLevel[]
-  asks: BookPriceLevel[]
+  bids: PriceLevel[]
+  asks: PriceLevel[]
+}
+
+export type LeveledTradeVolumeNormalized = {
+  type: BinaryMessageType.LeveledTradeVolume
+  exchange: string
+  symbol: string
+  timestamp: number
+  interval: number
+  idx: number
+  isSnapshot: boolean
+  levelsBuy: PriceLevel[]
+  levelsSell: PriceLevel[]
 }
 
 export interface ErrorMessage {
@@ -232,7 +258,8 @@ export enum BinaryMessageType {
   Index = 'com.okotoki.model.Index',
   Price = 'com.okotoki.model.Price',
   TradeVolume = 'com.okotoki.model.TradeVolume',
-  BookChange = 'com.okotoki.model.BookChange'
+  BookChange = 'com.okotoki.model.BookChange',
+  LeveledTradeVolume = 'com.okotoki.model.LeveledTradeVolume'
 }
 
 export type InBinaryMessageRaw =
@@ -251,6 +278,12 @@ export type InBinaryMessageRaw =
   | {
       [BinaryMessageType.BookChange]?: Omit<BookChangeNormalized, 'type'>
     }
+  | {
+      [BinaryMessageType.LeveledTradeVolume]?: Omit<
+        LeveledTradeVolumeNormalized,
+        'type'
+      >
+    }
 
 export type InBinaryMessage =
   | TradeNormalized
@@ -258,6 +291,7 @@ export type InBinaryMessage =
   | PriceUpdateNormalized
   | TradeVolumeNormalized
   | BookChangeNormalized
+  | LeveledTradeVolumeNormalized
 
 export type InMessage = InJSONMessage | InBinaryMessage
 
