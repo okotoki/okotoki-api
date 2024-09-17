@@ -58,6 +58,7 @@ export type Subscription =
   | OrderBookSubscription
   | IndexSubscription
   | LeveledTradeVolumeSubscription
+  | CandlesSubscription
 
 export interface BaseSubscription {
   symbol: string
