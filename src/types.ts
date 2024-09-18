@@ -226,6 +226,18 @@ export type LeveledTradeVolumeNormalized = {
   levelsSell: PriceLevel[]
 }
 
+export type CandleNormalized = {
+  type: BinaryMessageType.Candle
+  exchange: Exchange
+  symbol: string
+  interval: number
+  window: number
+  timestamp: number
+  idx: number
+  isSnapshot: boolean
+  values: object
+}
+
 export interface ErrorMessage {
   type: 'error'
   errorCode: string
@@ -260,7 +272,8 @@ export enum BinaryMessageType {
   Price = 'com.okotoki.model.Price',
   TradeVolume = 'com.okotoki.model.TradeVolume',
   BookChange = 'com.okotoki.model.BookChange',
-  LeveledTradeVolume = 'com.okotoki.model.LeveledTradeVolume'
+  LeveledTradeVolume = 'com.okotoki.model.LeveledTradeVolume',
+  Candle = 'com.okotoki.model.Candle'
 }
 
 export type InBinaryMessageRaw =
@@ -285,6 +298,9 @@ export type InBinaryMessageRaw =
         'type'
       >
     }
+  | {
+      [BinaryMessageType.Candle]?: Omit<CandleNormalized, 'type'>
+    }
 
 export type InBinaryMessage =
   | TradeNormalized
@@ -293,6 +309,7 @@ export type InBinaryMessage =
   | TradeVolumeNormalized
   | BookChangeNormalized
   | LeveledTradeVolumeNormalized
+  | CandleNormalized
 
 export type InMessage = InJSONMessage | InBinaryMessage
 

@@ -24,22 +24,31 @@ api.onMessage = (msg) => {
 }
 
 api.subscribe([
-  { kind: 'index', coin: 'BTC' },
-  { kind: 'index', coin: 'ETH' },
-  { symbol: 'BTCUSDT', exchange: Exchanges.binance, kind: 'price' },
+  // { kind: 'index', coin: 'BTC' },
+  // { kind: 'index', coin: 'ETH' },
+  // { symbol: 'BTCUSDT', exchange: Exchanges.binance, kind: 'price' },
+  // {
+  // {
+  //   symbol: 'BTCUSDT',
+  //   exchange: Exchanges.binance,
+  //   kind: 'largeTrades',
+  //   thresholdTrades: 10000,
+  //   limitTrades: 30,
+  //   thresholdLiquidations: 0,
+  //   limitLiquidations: 30
+  // }
+  // {
+  //   symbol: 'XBTUSD',
+  //   exchange: Exchanges.bitmex,
+  //   kind: 'tradeVolume'
+  // }
   {
-    symbol: 'BTCUSDT',
+    kind: 'candles',
     exchange: Exchanges.binance,
-    kind: 'largeTrades',
-    thresholdTrades: 10000,
-    limitTrades: 30,
-    thresholdLiquidations: 0,
-    limitLiquidations: 30
-  },
-  {
-    symbol: 'XBTUSD',
-    exchange: Exchanges.bitmex,
-    kind: 'tradeVolume'
+    symbol: 'BTCUSDT',
+    interval: 60000,
+    window: 3600000,
+    metrics: ['open', 'low', 'high']
   }
 ])
 
@@ -65,13 +74,13 @@ const leveledTradeVolumeOpts = {
   step: 10
 }
 
-api.subscribe([
-  coinIndex('BTC'),
-  coinIndex('ETH'),
-  price(Exchanges.binance, 'BTCUSDT'),
-  largeTrades(Exchanges.binance, 'BTCUSDT', tradesOpts),
-  largeTrades(Exchanges.bitmex, 'XBTUSD', tradesOpts),
-  tradeVolume(Exchanges.bitmex, 'BTCUSDT'),
-  orderBook(Exchanges.binance, 'BTCUSDT', orderBookOpts),
-  leveledTradeVolume(Exchanges.binance, 'BTCUSDT', leveledTradeVolumeOpts)
-])
+// api.subscribe([
+//   coinIndex('BTC'),
+//   coinIndex('ETH'),
+//   price(Exchanges.binance, 'BTCUSDT'),
+//   largeTrades(Exchanges.binance, 'BTCUSDT', tradesOpts),
+//   largeTrades(Exchanges.bitmex, 'XBTUSD', tradesOpts),
+//   tradeVolume(Exchanges.bitmex, 'BTCUSDT'),
+//   orderBook(Exchanges.binance, 'BTCUSDT', orderBookOpts),
+//   leveledTradeVolume(Exchanges.binance, 'BTCUSDT', leveledTradeVolumeOpts)
+// ])
