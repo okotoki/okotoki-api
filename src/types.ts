@@ -231,7 +231,6 @@ export type CandleNormalized = {
   exchange: Exchange
   symbol: string
   interval: number
-  window: number
   timestamp: number
   idx: number
   isSnapshot: boolean
