@@ -118,6 +118,7 @@ That's it? That's it.
 - trades & liquidations
 - price
 - orderbooks (_only Binance for now_)
+- candle data
 
 ## Computable data feeds
 
@@ -199,6 +200,7 @@ An generic method used to configure subscription feeds. Each `Subscription` corr
 - [`Price`](#price)
 - [`Index`](#index)
 - [`TradeVolume`](#tradevolume)
+- [`Candles`](#candles)
 
 Example:
 
@@ -654,6 +656,86 @@ Example:
   ]
 }
 ```
+
+## Candles
+
+Subscribe to candle data feed. This provides OHLCV (Open, High, Low, Close, Volume) data for a given symbol and exchange.
+
+- `kind: candles` - subscription kind
+- `symbol: string` - symbol for which to receive updates.
+- `exchange: Exchange` - exchange for which to receive updates.
+- `interval: number` - the interval for each candle in milliseconds.
+- `window: number` - the time window for which to receive candle data in milliseconds.
+- `metrics: string[]` - array of metrics to include in the candle data (e.g., ["open", "high", "low", "close", "volume"])
+
+Will emit `CandleNormalized` into `.onMessage` handler.
+
+### CandlesSubscription
+
+Example:
+
+```javascript
+api.subscribe([
+  {
+    kind: 'candles',
+    exchange: Exchange.binance,
+    symbol: 'BTCUSDT',
+    interval: 60000, // 1 minute
+    window: 3600000, // 1 hour
+    metrics: ['open', 'high', 'low', 'close', 'volume']
+  }
+])
+
+// or via shortcut method
+
+const candlesOpts = {
+  interval: 60000,
+  window: 3600000,
+  metrics: ['open', 'high', 'low', 'close', 'volume']
+}
+
+api.subscribe([candle(Exchanges.binance, 'BTCUSDT', candlesOpts)])
+```
+
+### CandleNormalized
+
+Fields:
+
+- `type=streamElem`
+- `kind=candle`
+- `exchange` (`string`)
+- `symbol` (`string`)
+- `window` (`number`) - time window in milliseconds
+- `interval` (`number`) - candle interval in milliseconds
+- `timestamp` (`number`) - timestamp of the candle
+- `idx` (`number`) - index of the candle in the current window
+- `isSnapshot` (`boolean`) - indicates if this is a snapshot of historical data
+- `values` (`object`) - an object containing the requested metrics (e.g., open, high, low, close, volume)
+
+Example:
+
+```json
+{
+  "type": "streamElem",
+  "kind": "candle",
+  "exchange": "binance",
+  "symbol": "BTCUSDT",
+  "window": 3600000,
+  "interval": 60000,
+  "timestamp": 1672531200000,
+  "idx": 59,
+  "isSnapshot": false,
+  "values": {
+    "open": 16500.0,
+    "high": 16550.5,
+    "low": 16480.2,
+    "close": 16525.8,
+    "volume": 1250.45
+  }
+}
+```
+
+This candle data subscription allows you to receive regular updates on price and volume information for a specific trading pair, enabling you to perform various types of market analysis or build charting applications.
 
 # License
 

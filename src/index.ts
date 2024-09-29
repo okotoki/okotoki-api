@@ -5,6 +5,8 @@ import WebSocket from 'isomorphic-ws'
 import ReconnectingWebSocket, { Event } from './reconnecting-websocket'
 import {
   BinaryMessageType,
+  CandlesSubscription,
+  CandlesSubscriptionOptions,
   Exchange,
   InBinaryMessage,
   InBinaryMessageRaw,
@@ -102,6 +104,17 @@ export const leveledTradeVolume = (
   options: LeveledTradeVolumeSubscriptionOptions
 ): LeveledTradeVolumeSubscription => ({
   kind: 'leveledTradeVolume',
+  exchange,
+  symbol,
+  ...options
+})
+
+export const candle = (
+  exchange: Exchange,
+  symbol: string,
+  options: CandlesSubscriptionOptions
+): CandlesSubscription => ({
+  kind: 'candles',
   exchange,
   symbol,
   ...options

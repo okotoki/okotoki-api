@@ -1,5 +1,6 @@
 import Api, {
   Exchanges,
+  candle,
   coinIndex,
   largeTrades,
   leveledTradeVolume,
@@ -24,31 +25,30 @@ api.onMessage = (msg) => {
 }
 
 api.subscribe([
-  // { kind: 'index', coin: 'BTC' },
-  // { kind: 'index', coin: 'ETH' },
-  // { symbol: 'BTCUSDT', exchange: Exchanges.binance, kind: 'price' },
-  // {
-  // {
-  //   symbol: 'BTCUSDT',
-  //   exchange: Exchanges.binance,
-  //   kind: 'largeTrades',
-  //   thresholdTrades: 10000,
-  //   limitTrades: 30,
-  //   thresholdLiquidations: 0,
-  //   limitLiquidations: 30
-  // }
-  // {
-  //   symbol: 'XBTUSD',
-  //   exchange: Exchanges.bitmex,
-  //   kind: 'tradeVolume'
-  // }
+  { kind: 'index', coin: 'BTC' },
+  { kind: 'index', coin: 'ETH' },
+  { symbol: 'BTCUSDT', exchange: Exchanges.binance, kind: 'price' },
+  {
+    symbol: 'BTCUSDT',
+    exchange: Exchanges.binance,
+    kind: 'largeTrades',
+    thresholdTrades: 10000,
+    limitTrades: 30,
+    thresholdLiquidations: 0,
+    limitLiquidations: 30
+  },
+  {
+    symbol: 'XBTUSD',
+    exchange: Exchanges.bitmex,
+    kind: 'tradeVolume'
+  },
   {
     kind: 'candles',
     exchange: Exchanges.binance,
     symbol: 'BTCUSDT',
-    interval: 60000,
+    interval: 300000,
     window: 3600000,
-    metrics: ['open', 'low', 'high']
+    metrics: []
   }
 ])
 
@@ -74,13 +74,20 @@ const leveledTradeVolumeOpts = {
   step: 10
 }
 
-// api.subscribe([
-//   coinIndex('BTC'),
-//   coinIndex('ETH'),
-//   price(Exchanges.binance, 'BTCUSDT'),
-//   largeTrades(Exchanges.binance, 'BTCUSDT', tradesOpts),
-//   largeTrades(Exchanges.bitmex, 'XBTUSD', tradesOpts),
-//   tradeVolume(Exchanges.bitmex, 'BTCUSDT'),
-//   orderBook(Exchanges.binance, 'BTCUSDT', orderBookOpts),
-//   leveledTradeVolume(Exchanges.binance, 'BTCUSDT', leveledTradeVolumeOpts)
-// ])
+const candleOpts = {
+  interval: 300000,
+  window: 3600000,
+  metrics: []
+}
+
+api.subscribe([
+  coinIndex('BTC'),
+  coinIndex('ETH'),
+  price(Exchanges.binance, 'BTCUSDT'),
+  largeTrades(Exchanges.binance, 'BTCUSDT', tradesOpts),
+  largeTrades(Exchanges.bitmex, 'XBTUSD', tradesOpts),
+  tradeVolume(Exchanges.bitmex, 'BTCUSDT'),
+  orderBook(Exchanges.binance, 'BTCUSDT', orderBookOpts),
+  leveledTradeVolume(Exchanges.binance, 'BTCUSDT', leveledTradeVolumeOpts),
+  candle(Exchanges.binance, 'BTCUSDT', candleOpts)
+])
