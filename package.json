@@ -1,6 +1,6 @@
 {
   "name": "okotoki",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Okotoki API client for node",
   "main": "./lib/index.js",
   "scripts": {
