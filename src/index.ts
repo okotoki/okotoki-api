@@ -141,6 +141,8 @@ const defaultWsOptions: WsOptions = {
   maxRetries: Infinity
 }
 
+export type ConnectionState = 'disconnected' | 'connecting' | 'connected'
+
 export default class Api {
   private _rws?: ReconnectingWebSocket
   private _wsUrl: string = 'wss://api-eu.okotoki.com/ws'
@@ -151,6 +153,7 @@ export default class Api {
   private debug = dbg('okotoki-api')
 
   public onMessage: (msg: InMessage) => void = () => {}
+  public onConnectionStateChange: (state: ConnectionState) => void = () => {}
 
   constructor(
     private options: OkotokiApiOptions,
@@ -191,6 +194,8 @@ export default class Api {
       undefined,
       this.wsOptions
     )
+
+    this.onConnectionStateChange('connecting')
 
     this._rws.onopen = this._onConnectionEstabilished
     this._rws.onclose = this._onConnectionClosed
@@ -331,12 +336,14 @@ export default class Api {
 
     this._sendSubscriptionMessage(this._preConnectSubscriptionsQueue.flat())
     this._preConnectSubscriptionsQueue = []
+    this.onConnectionStateChange('connected')
   }
 
   private _onConnectionClosed = () => {
     this.debug('connection closed')
     this.stopPingInterval()
     this._initiallyConnected = false
+    this.onConnectionStateChange('disconnected')
   }
 }
 
